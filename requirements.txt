@@ -1,0 +1,10 @@
+torch 
+torchvision 
+torchaudio
+datasets
+transformers
+rouge
+codebleu
+nltk==3.8
+scikit-learn
+matplotlib
