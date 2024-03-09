@@ -26,15 +26,13 @@ from torch.optim.lr_scheduler import StepLR
 
 from transformers import T5Tokenizer, RobertaTokenizer, T5ForConditionalGeneration, AutoModelForCausalLM, AutoTokenizer
 
+import nltk
+nltk.download('punkt')
 
 from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 from nltk.translate.meteor_score import meteor_score
 from rouge import Rouge 
 from codebleu import calc_codebleu 
-
-# for dirname, _, filenames in os.walk(ROOT_DIR):
-#     for filename in filenames:
-#         print(os.path.join(dirname, filename))
 
 # Code Control
 MODEL_NAME = "t5-base"
@@ -42,6 +40,13 @@ MAX_INPUT_TOKENS = 512
 MAX_OUTPUT_TOKENS = 512
 BATCH_SIZE = 8
 EPOCHS = 2
+DEVICE_IDS = [0, 1]
+
+if 'KAGGLE_KERNEL_RUN_TYPE' in os.environ:
+    print("Running in Kaggle environment")
+else:
+    DEVICE_IDS = [0, 1, 2, 4]
+    print("Not running in Kaggle environment")
 
 tokenizer = T5Tokenizer.from_pretrained(MODEL_NAME)
 model = T5ForConditionalGeneration.from_pretrained(MODEL_NAME)
@@ -150,7 +155,7 @@ def set_strategy(model, tpu, gpu):
         gpu_count = torch.cuda.device_count()
         if gpu_count > 1:
             print(f"GPU strategy setup complete with {gpu_count} GPUs!")
-            model = torch.nn.DataParallel(model, device_ids=[0, 1, 2, 4])
+            model = torch.nn.DataParallel(model, device_ids=DEVICE_IDS)
             model.to(device)
         elif gpu_count == 1:
             model.to(device)
