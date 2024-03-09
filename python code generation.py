@@ -1,7 +1,15 @@
-ROOT_DIR = 'working/Python-Code-Generation'
-!pip install -r "{ROOT_DIR}/requirements.txt"
+ROOT_DIR = "."
+import subprocess
+
+# Run the shell script with ROOT_DIR as an argument
+try:
+    subprocess.run(['bash', "start.sh", ROOT_DIR], check=True)
+    print("Shell script executed successfully.")
+except subprocess.CalledProcessError as e:
+    print("Error running shell script:", e)
+
+
 # Loading required library
-!nvidia-smi
 import os
 import numpy as np
 import pandas as pd 
@@ -24,9 +32,9 @@ from nltk.translate.meteor_score import meteor_score
 from rouge import Rouge 
 from codebleu import calc_codebleu 
 
-for dirname, _, filenames in os.walk(ROOT_DIR):
-    for filename in filenames:
-        print(os.path.join(dirname, filename))
+# for dirname, _, filenames in os.walk(ROOT_DIR):
+#     for filename in filenames:
+#         print(os.path.join(dirname, filename))
 
 # Code Control
 MODEL_NAME = "t5-base"

@@ -8,3 +8,4 @@ codebleu
 nltk==3.8
 scikit-learn
 matplotlib
+sentencepiece
