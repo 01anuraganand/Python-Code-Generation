@@ -169,8 +169,8 @@ model, device
 
 # Stage3: Split of data
 dataset = TaskDataset(data_file_path, tokenizer, "text_input", "python_code", data_text_length = MAX_INPUT_TOKENS, data_code_length = MAX_OUTPUT_TOKENS)
-TRAIN_SIZE =  int(0.001 * len(dataset))
-VAL_SIZE = int(0.001 * len(dataset))
+TRAIN_SIZE =  int(0.8 * len(dataset))
+VAL_SIZE = int(0.1 * len(dataset))
 TEST_SIZE = len(dataset) - TRAIN_SIZE - VAL_SIZE
 train_dataset, val_dataset, test_dataset = random_split(dataset, [TRAIN_SIZE, VAL_SIZE, TEST_SIZE])
 print(f"Total length dataset :{len(dataset)}")
