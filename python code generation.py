@@ -1,16 +1,27 @@
-ROOT_DIR = "."
 import subprocess
-
-# Run the shell script with ROOT_DIR as an argument
-try:
-    subprocess.run(['bash', "start.sh", ROOT_DIR], check=True)
-    print("Shell script executed successfully.")
-except subprocess.CalledProcessError as e:
-    print("Error running shell script:", e)
-
+import os
+# by default setting to kaggle environment
+DEVICE_IDS = [0, 1]
+ROOT_DIR = '/kaggle/working/Python-Code-Generation'    
+    
+if 'KAGGLE_KERNEL_RUN_TYPE' in os.environ:
+    try:
+        subprocess.run(['bash', f"{ROOT_DIR}/start.sh", ROOT_DIR], check=True)
+        print("Shell script executed successfully in kaggle environment.")
+    except subprocess.CalledProcessError as e:
+        print("Error running shell script in kaggle environment:", e)
+    print("Running in Kaggle environment")
+else:
+    DEVICE_IDS = [0, 1, 2, 4]
+    ROOT_DIR = "."
+    try:
+        subprocess.run(['bash', "start.sh", ROOT_DIR], check=True)
+        print("Shell script executed successfully in Nvidia DGX A100 environment.")
+    except subprocess.CalledProcessError as e:
+        print("Error running shell script in Nvidia GDX A100 environemnt:", e)
+    print("Running in Nvidia DGX A100 environment")
 
 # Loading required library
-import os
 import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt
