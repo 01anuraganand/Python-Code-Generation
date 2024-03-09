@@ -150,7 +150,7 @@ def set_strategy(model, tpu, gpu):
         gpu_count = torch.cuda.device_count()
         if gpu_count > 1:
             print(f"GPU strategy setup complete with {gpu_count} GPUs!")
-            model = torch.nn.DataParallel(model)
+            model = torch.nn.DataParallel(model, device_ids=[0, 1, 2, 4])
             model.to(device)
         elif gpu_count == 1:
             model.to(device)
