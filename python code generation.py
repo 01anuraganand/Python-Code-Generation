@@ -13,7 +13,7 @@ if 'KAGGLE_KERNEL_RUN_TYPE' in os.environ:
     print("Running in Kaggle environment")
 else:
     DEVICE_IDS = [0, 1, 2, 4]
-    ROOT_DIR = "."
+    ROOT_DIR = "/home/coder/Anurag/Python-Code-Generation"
     try:
         subprocess.run(['bash', f"{ROOT_DIR}/start.sh", ROOT_DIR], check=True)
         print("Shell script executed successfully in Nvidia DGX A100 environment.")
@@ -167,8 +167,8 @@ def set_strategy(model, tpu, gpu):
         if gpu_count > 1:
             print(f"GPU strategy setup complete with {gpu_count} GPUs!")
             #model = torch.nn.DataParallel(model, device_ids=DEVICE_IDS)
-            torch.distributed.init_process_group(backend='nccl')
             model.to(device)
+            torch.distributed.init_process_group(backend='nccl')
             model = DistributedDataParallel(model, device_ids=[DEVICE_IDS], output_device=DEVICE_IDS)
             
         elif gpu_count == 1:
