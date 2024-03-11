@@ -18,7 +18,7 @@ else:
         subprocess.run(['bash', "start.sh", ROOT_DIR], check=True)
         print("Shell script executed successfully in Nvidia DGX A100 environment.")
     except subprocess.CalledProcessError as e:
-        print("Error running shell script in Nvidia GDX A100 environemnt:", e)
+        print("Error running shell script in Nvidia DGX A100 environemnt:", e)
     print("Running in Nvidia DGX A100 environment")
 
 # Loading required library
