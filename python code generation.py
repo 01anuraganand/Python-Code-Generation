@@ -15,7 +15,7 @@ else:
     DEVICE_IDS = [0, 1, 2, 4]
     ROOT_DIR = "."
     try:
-        subprocess.run(['bash', "start.sh", ROOT_DIR], check=True)
+        subprocess.run(['bash', f"{ROOT_DIR}/start.sh", ROOT_DIR], check=True)
         print("Shell script executed successfully in Nvidia DGX A100 environment.")
     except subprocess.CalledProcessError as e:
         print("Error running shell script in Nvidia DGX A100 environemnt:", e)
