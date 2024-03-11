@@ -33,8 +33,8 @@ from tqdm.autonotebook import tqdm
 import torch
 from torch.utils.data import Dataset, DataLoader, random_split
 from torch.optim.lr_scheduler import StepLR
-
-
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel
 from transformers import T5Tokenizer, RobertaTokenizer, T5ForConditionalGeneration, AutoModelForCausalLM, AutoTokenizer
 
 import nltk
@@ -166,8 +166,11 @@ def set_strategy(model, tpu, gpu):
         gpu_count = torch.cuda.device_count()
         if gpu_count > 1:
             print(f"GPU strategy setup complete with {gpu_count} GPUs!")
-            model = torch.nn.DataParallel(model, device_ids=DEVICE_IDS)
+            #model = torch.nn.DataParallel(model, device_ids=DEVICE_IDS)
+            torch.distributed.init_process_group(backend='nccl')
             model.to(device)
+            model = DistributedDataParallel(model, device_ids=[DEVICE_IDS], output_device=DEVICE_IDS)
+            
         elif gpu_count == 1:
             model.to(device)
             print(f"GPU strategy setup complete with {gpu_count} GPU!")
