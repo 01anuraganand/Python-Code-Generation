@@ -51,8 +51,8 @@ MAX_INPUT_TOKENS = 512
 MAX_OUTPUT_TOKENS = 512
 BATCH_SIZE = 8
 EPOCHS = 2
-DO_SAMPLE = True
-TEMPERATURE = 0.1
+DO_SAMPLE = False
+TEMPERATURE = None
 DEVICE_IDS = [0, 1]
 
 if 'KAGGLE_KERNEL_RUN_TYPE' in os.environ:
@@ -81,35 +81,35 @@ def save_metrics_to_excel(metrics_dict, file_name):
 
 # Stage1 : Dataset Preprocessing
 
-# data_text_length = 0
-# data_code_length = 0
-data_file_path = f"{ROOT_DIR}/dataset/python_code_merge_input_output.jsonl"
-# with open(data_file_path, 'r') as f:
-#     for line in f:
-#         # Load each line as a JSON object
-#         data = json.loads(line)
+data_text_length = 0
+data_code_length = 0
+data_file_path = f"{ROOT_DIR}/dataset/pythoncode.jsonl"
+with open(data_file_path, 'r') as f:
+    for line in f:
+        # Load each line as a JSON object
+        data = json.loads(line)
         
-#         # Extract text and code
-#         text = data['text_input']
-#         code = data['python_code']
+        # Extract text and code
+        text = data['text']
+        code = data['code']
         
-#         # Update lengths if necessary
-#         text_length = len(text)
-#         code_length = len(code)
+        # Update lengths if necessary
+        text_length = len(text)
+        code_length = len(code)
         
-#         if text_length > data_text_length:
-#             data_text_length = text_length
+        if text_length > data_text_length:
+            data_text_length = text_length
         
-#         if code_length > data_code_length:
-#             data_code_length = code_length
+        if code_length > data_code_length:
+            data_code_length = code_length
 
-# # Count the number of lines in the file
-# with open(data_file_path, 'r') as f:
-#     data_length = sum(1 for _ in f)
+# Count the number of lines in the file
+with open(data_file_path, 'r') as f:
+    data_length = sum(1 for _ in f)
 
-# print("Length of data:", data_length)
-# print("Maximum length of text:", data_text_length)
-# print("Maximum length of code:", data_code_length)
+print("Length of data:", data_length)
+print("Maximum length of text:", data_text_length)
+print("Maximum length of code:", data_code_length)
 
 
 class TaskDataset(Dataset):
@@ -189,7 +189,7 @@ model, device
 
 
 # Stage3: Split of data
-dataset = TaskDataset(data_file_path, tokenizer, "text_input", "python_code", data_text_length = MAX_INPUT_TOKENS, data_code_length = MAX_OUTPUT_TOKENS)
+dataset = TaskDataset(data_file_path, tokenizer, "text", "code", data_text_length = MAX_INPUT_TOKENS, data_code_length = MAX_OUTPUT_TOKENS)
 TRAIN_SIZE =  int(0.8 * len(dataset))
 VAL_SIZE = int(0.1 * len(dataset))
 TEST_SIZE = len(dataset) - TRAIN_SIZE - VAL_SIZE
@@ -211,7 +211,7 @@ def calculate_metrics(reference, candidate, tokenizer):
     #This method uses the p-norm method mentioned in the BLEU SmoothingFunction paper
     smoothie = SmoothingFunction().method4
     # Calculate BLEU score
-    bleu_score = sentence_bleu([reference.split()], candidate.split(), smoothing_function=smoothie)
+    bleu_score = sentence_bleu([reference], candidate, smoothing_function=smoothie)
 
     # Calculate Rouge score
     rouge = Rouge()
